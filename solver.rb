@@ -1,4 +1,5 @@
 require 'sudoku'
+$LOAD_PATH.unshift('/Users/andrew.mcinally/Desktop/testing_grounds/sudoku/solver.rb')
 puts Sudoku.solve(Sudoku::Puzzle.new(ARGF.readlines))
 
 module Sudoku
@@ -9,7 +10,7 @@ module Sudoku
     def initialize(lines)
       s = if lines.respond_to? :join
             lines.join
-          else
+          else/Users/andrew.mcinally/Desktop/testing_grounds/sudoko/solver.rb
             lines.dup
           end
 
