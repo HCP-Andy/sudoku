@@ -2,6 +2,7 @@
 
 require 'sudoku'
 $LOAD_PATH.unshift('/Users/andrew.mcinally/Desktop/testing_grounds/sudoku/solver.rb')
+
 puts Sudoku.solve(Sudoku::Puzzle.new(ARGF.readlines))
 
 # The Sudoku module provides functionality for solving Sudoku puzzles.
