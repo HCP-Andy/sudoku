@@ -10,7 +10,7 @@ module Sudoku
     def initialize(lines)
       s = if lines.respond_to? :join
             lines.join
-          else/Users/andrew.mcinally/Desktop/testing_grounds/sudoko/solver.rb
+          else
             lines.dup
           end
 
@@ -42,6 +42,7 @@ module Sudoku
 
     def []=(row, col, newvalue)
       raise Invalid, "illegal cell value" unless (0..9).include? newvalue
+
       @grid[row * 9 + col] = newvalue
     end
 
@@ -54,8 +55,9 @@ module Sudoku
     def each_unknown
       0.upto 8 do |row|
         0.upto 8 do |col|
-          index = row*9+col
+          index = row * 9 + col
           next if @grid[index] != 0
+
           box = BoxOfIndex[index]
           yield row, col, box
         end
@@ -79,7 +81,7 @@ module Sudoku
     private
 
     def rowdigits(row)
-      @grid[row*9, 9] - [0]
+      @grid[row * 9, 9] - [0]
     end
 
     def coldigits(col)
@@ -96,10 +98,10 @@ module Sudoku
     def boxdigits(b)
       i = BoxToIndex[b]
       [
-        @grid[i], @grid[i+1], @grid[i+2],
-      @grid[i+9], @grid[i+10], @grid[i+11],
-      @grid[i+18], @grid[i+19], @grid[i+20]
-      ] -[0]
+        @grid[i], @grid[i + 1], @grid[i + 2],
+        @grid[i + 9], @grid[i + 10], @grid[i + 11],
+        @grid[i + 18], @grid[i + 19], @grid[i + 20]
+      ] - [0]
     end
   end
 
