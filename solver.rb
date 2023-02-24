@@ -1,11 +1,31 @@
+# frozen_string_literal: true
+
 require 'sudoku'
 $LOAD_PATH.unshift('/Users/andrew.mcinally/Desktop/testing_grounds/sudoku/solver.rb')
 puts Sudoku.solve(Sudoku::Puzzle.new(ARGF.readlines))
 
+# The Sudoku module provides functionality for solving Sudoku puzzles.
+#
+# A Sudoku puzzle is a 9x9 grid of cells, with each cell containing a number between 1 and 9. The goal of the puzzle is
+# to fill in the grid such that each row, column, and 3x3 sub-grid contains the numbers 1 through 9 exactly once.
+#
+# This module provides a class, `Puzzle`, which represents a Sudoku puzzle and can be used to solve it. It also provides
+# methods for scanning the puzzle and finding possible solutions, as well as error classes for handling invalid and
+# unsolvable puzzles.
+#
+# Example usage:
+#
+#     require 'sudoku'
+#     puzzle = Sudoku::Puzzle.new(File.read('puzzle.txt'))
+#     solution = Sudoku.solve(puzzle)
+#     puts solution
+#
 module Sudoku
+
+  # A class representing a Sudoku puzzle.
   class Puzzle
-    ASCII = '.123456789'.freeze
-    BIN = "\000\001\002\003\004\005\006\007\008\009".freeze
+    ASCII = '.123456789'
+    BIN = "\000\001\002\003\004\005\006\007\008\009"
 
     def initialize(lines)
       s = if lines.respond_to? :join
@@ -41,7 +61,7 @@ module Sudoku
     end
 
     def []=(row, col, newvalue)
-      raise Invalid, "illegal cell value" unless (0..9).include? newvalue
+      raise Invalid, 'illegal cell value' unless (0..9).include? newvalue
 
       @grid[row * 9 + col] = newvalue
     end
@@ -64,10 +84,10 @@ module Sudoku
       end
     end
 
-    def has_duplicates?
-      0.upto(8) {|row| return true if rowdigits(row).uniq! }
-      0.upto(8) {|col| return true if coldigits(col).uniq! }
-      0.upto(8) {|box| return true if boxdigits(box).uniq! }
+    def duplicates?
+      0.upto(8) { |row| return true if rowdigits(row).uniq! }
+      0.upto(8) { |col| return true if coldigits(col).uniq! }
+      0.upto(8) { |box| return true if boxdigits(box).uniq! }
 
       false
     end
@@ -86,17 +106,17 @@ module Sudoku
 
     def coldigits(col)
       result = []
-      col.step(80, 9) {|i|
+      col.step(80, 9) do |i|
         v = @grid[i]
-        result << v if (v != 0)
-      }
+        result << v if v != 0
+      end
       result
     end
 
     BoxToIndex = [0, 3, 6, 27, 30, 33, 54, 57, 60].freeze
 
-    def boxdigits(b)
-      i = BoxToIndex[b]
+    def boxdigits(bxx)
+      i = BoxToIndex[bxx]
       [
         @grid[i], @grid[i + 1], @grid[i + 2],
         @grid[i + 9], @grid[i + 10], @grid[i + 11],
@@ -111,7 +131,7 @@ module Sudoku
   class Impossible < StandardError
   end
 
-  def Sudoku.scan(puzzle)
+  def self.scan(puzzle)
     unchanged = false
 
     until unchanged
@@ -131,21 +151,23 @@ module Sudoku
         else
           if unchanged && p.size < min
             min = p.size
-            rmin, cmin, pmin = row, col, p
+            rmin = row
+            cmin = col
+            pmin = p
           end
         end
       end
     end
 
-    return rmin, cmin, pmin
+    [rmin, cmin, pmin]
   end
 
-  def Sudoku.solve(puzzle)
+  def self.solve(puzzle)
     puzzle = puzzle.dup
 
     r, c, p = scan(puzzle)
 
-    return puzzle if r == nil
+    return puzzle if r.nil?
 
     p.each do |guess|
       puzzle[r, c] = guess
